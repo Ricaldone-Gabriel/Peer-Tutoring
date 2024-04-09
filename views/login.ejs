@@ -1,0 +1,39 @@
+<%- include("../public/partials/header.ejs") %>
+<body>
+  <div class="container ">
+  <div class="row">
+    <div class="col">
+      <div class="container text-center p-1 accessBox">
+        <form action="/login" method="post">
+            <div class="row m-1">
+                <div class="col"><label for="username">Username: </label>
+                <input type="text" name="username" required></div> 
+            </div>
+            <div class="row m-1">
+                <div class="col">
+                    <label for="password">Password: </label>
+                    <input type="password" name="password" required>
+                </div>
+            </div>
+            <div class="row m-1">
+                <div class="col">
+                    <label for="remember">Ricordami: </label> 
+                    <input type="checkbox" name="remember">
+                    
+                </div>
+            </div>
+            <div class="row m-1">
+                <div class="col">   
+                    <input type="submit" value="Login"> 
+                </div>
+            </div>
+        </form>
+        
+        <a href="/register">Registrati!</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
