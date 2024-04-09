@@ -1,4 +1,7 @@
 const express = require("express");
+const session = require("express-session");
+const bodyParser = require("body-parser");
+const ws = require("express-ws");
 const http = require("http");
 const mysql = require("mysql");
 const path = require("path");
@@ -13,7 +16,17 @@ app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use("/", express.static(__dirname + "/views"));
 app.set("views", path.join(__dirname, "views"));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(device.capture());
+
+app.use(
+  session({
+    secret: "test",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }, // In un ambiente di produzione, imposta a true in caso di HTTPS
+  })
+);
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -21,6 +34,25 @@ var connection = mysql.createConnection({
   password: "",
   database: "verifica",
 });
+
+function isAuthenticated(req, res, next) {
+  if (req.session.user) {
+    // L'utente è autenticato, procedi all'endpoint successivo
+    return next();
+  } else {
+    // L'utente non è autenticato, reindirizzalo alla pagina di login
+    res.redirect("/loginPage");
+  }
+}
+function isNotAuthenticated(req, res, next) {
+  if (!req.session.user) {
+    // L'utente non è autenticato, procedi all'endpoint successivo
+    return next();
+  } else {
+    // L'utente è già autenticato, reindirizzalo alla pagina protetta
+    res.redirect("/");
+  }
+}
 
 /*connection.query(QueryPosIniziale, (err, result) => {
   if (err) throw err;
@@ -33,7 +65,7 @@ var connection = mysql.createConnection({
 
 //Query per determinare la posizione del quadrato dopo n Query
 
-app.get("/", (req, res) => {
+app.get("/", isAuthenticated, (req, res) => {
   if (req.device.type === "desktop") {
     res.render("indexDesktop.ejs");
   } else {
