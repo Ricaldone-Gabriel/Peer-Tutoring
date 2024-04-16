@@ -135,33 +135,48 @@ app.post("/login", isNotAuthenticated, (req, res) => {
 });
 
 app.post("/register", isNotAuthenticated, (req, res) => {
-  const { username, password, email } = req.body;
+  const { username, password, email, scuola, tipo, anno } = req.body;
   console.log(req.body);
-  /*
-  query = "SELECT * FROM utente WHERE Username = ? or Email = ?";
+  query = `SELECT * FROM utente WHERE Username = '${username}' or Email = '${email}'`;
   //Modificare la query di inserimento per selezionare l'id anno scolastico correttamente dato "scuola" e "anno" es: 0,3 terza media id=0
+
   connection.query(query, [username, email], (err, result) => {
     if (err) throw err;
     if (result.length > 0) {
       res.redirect("/register");
     } else {
-      query = `INSERT INTO utente (Username,Password,Email) VALUES ('${username}','${password}','${email}')`;
-      connection.query(query, (err, result) => {
-        if (err) throw err;
-        else console.log("Utente inserito");
-      });
-      query = `SELECT Username,ID_Utente FROM utente WHERE Username = '${username}'`;
+      query =
+        `SELECT ID_AnnoScolastico FROM` +
+        "`" +
+        "anno scolastico" + //giuro che se qualcuno mi fa vedere queste 5 righe, sbocco sul pavimento, sbraito verso un professore, invoco la madonna e san pietro, e vado a dormire.
+        "`" +
+        `WHERE Scuola=${scuola} AND Anno=${anno} AND Tipo='${tipo}'`;
       connection.query(query, (err, result) => {
         if (err) throw err;
         else {
-          req.session.user = result[0].ID_Utente;
-          req.session.username = result[0].Username;
-          req.session.cookie.maxAge = 24 * 60 * 60 * 1000;
-          res.redirect("/home");
+          console.log(result[0].ID_AnnoScolastico + " " + result);
+          query = `INSERT INTO utente (Username,Password,Email,ID_AnnoScolastico) VALUES ('${username}','${password}','${email}',${result[0].ID_AnnoScolastico})`;
+          connection.query(query, (err, result) => {
+            if (err) throw err;
+            else console.log("Utente inserito");
+          });
+          query = `SELECT Username,ID_Utente FROM utente WHERE Username = '${username}'`;
+          connection.query(query, (err, result) => {
+            if (err) throw err;
+            else {
+              req.session.user = result[0].ID_Utente;
+              req.session.username = result[0].Username;
+              req.session.cookie.maxAge = 24 * 60 * 60 * 1000;
+              res.redirect("/home");
+            }
+          });
         }
       });
+      /*
+      query = `INSERT INTO utente (Username,Password,Email,ID_AnnoScolastico) VALUES ('${username}','${password}','${email}')`;
+      ;*/
     }
-  });*/
+  });
 });
 
 const server = httpServer.listen(httpPort, () => {

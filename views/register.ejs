@@ -100,7 +100,26 @@
   function updateTipoSelect(scuolaValue) {
     var tipoContainer = document.getElementById("tipoContainer");
     tipoContainer.innerHTML = ""; // Rimuove il select aggiuntivo attuale
+    if (scuolaValue === "0") { // Scuola secondaria di secondo grado o università
+      var tipoSelect = document.createElement("select");
+      var label = document.createElement("label");
+      label.htmlFor = "Tipo";
+      label.innerHTML = "Tipo:";
 
+      tipoContainer.appendChild(label);
+      tipoSelect.id = "tipo";
+      var options = ["Media"];
+
+
+      options.forEach(function(value) {
+        var option = document.createElement("option");
+        option.text = value;
+        option.value = value;
+        tipoSelect.add(option);
+      });
+      tipoSelect.name = "tipo";
+      tipoContainer.appendChild(tipoSelect);
+    }
     if (scuolaValue === "1") { // Scuola secondaria di secondo grado o università
       var tipoSelect = document.createElement("select");
       var label = document.createElement("label");
@@ -108,8 +127,7 @@
       label.innerHTML = "Tipo:";
 
       tipoContainer.appendChild(label);
-      tipoSelect.id = "Tipo";
-      tipoSelect.name = "Tipo";
+      tipoSelect.id = "tipo";
       var options = ["Informatica", "Telecomunicazioni", "Biotecnologie", "Energia", "Scienze Applicate"];
 
 
@@ -119,7 +137,7 @@
         option.value = value;
         tipoSelect.add(option);
       });
-
+      tipoSelect.name = "tipo";
       tipoContainer.appendChild(tipoSelect);
     }
   }
