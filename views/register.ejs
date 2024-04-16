@@ -28,6 +28,26 @@
                 </div>
             </div>
             <div class="row m-1">
+                <div class="col">
+                    <label for="Scuola">Scuola: </label>
+                    <select id="Scuola">
+                      <option value="0">Scuola secondaria di primo grado</option>
+                      <option value="1">Scuola secondaria di secondo grado</option>
+                      <option value="2">Università</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row m-1">
+                <div class="col">
+                    <label for="Anno">Anno scolastico: </label>
+                    <select id="Anno">
+                      <option value="0">Scuola secondaria di primo grado</option>
+                      <option value="1">Scuola secondaria di secondo grado</option>
+                      <option value="2">Università</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row m-1">
                 <div class="col">   
                     <input type="submit" value="Registrati"> 
                 </div>
@@ -43,6 +63,37 @@
 <script>
   let passwordConferma = document.getElementById("passwordConferma")
   let password = document.getElementById("password")
+  let selectAnno = document.getElementById("Anno");
+  // Funzione per aggiornare le opzioni dell'elemento select dell'anno
+  function updateAnnoOptions(scuolaValue) {
+    var annoSelect = document.getElementById("Anno");
+    annoSelect.innerHTML = ""; // Rimuove tutte le opzioni attuali
+  
+    var options = [];
+    if (scuolaValue === "0") { // Scuola secondaria di primo grado
+      options = ["1", "2", "3"];
+    } else { // Scuola secondaria di secondo grado o università
+      options = ["1", "2", "3", "4", "5"];
+    }
+  
+    options.forEach(function(value) {
+      var option = document.createElement("option");
+      option.text = value;
+      option.value = value;
+      annoSelect.add(option);
+    });
+  }
+  
+  // Ascolta l'evento di cambio sulla select della scuola
+  document.getElementById("Scuola").addEventListener("change", function() {
+    var scuolaValue = this.value;
+    updateAnnoOptions(scuolaValue);
+  });
+  
+  // Inizializza le opzioni dell'anno sulla base della scuola selezionata inizialmente
+  updateAnnoOptions(document.getElementById("Scuola").value);
+
+
   function comparePwd() {
     if (passwordConferma.value) {
       if (password.value != passwordConferma.value) {
