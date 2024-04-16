@@ -1,61 +1,63 @@
 <%- include("../public/partials/header.ejs") %>
+
 <body>
-<div class="container ">
-  <div class="row">
-    <div class="col">
-      <div class="container text-center p-1 accessBox">
-        <form action="/register" method="post" onsubmit="return comparePwd()">
+  <div class="container ">
+    <div class="row">
+      <div class="col">
+        <div class="container text-center p-1 accessBox">
+          <form action="/register" method="post" onsubmit="return comparePwd()">
             <div class="row m-1">
-                <div class="col"><label for="username">Username: </label>
-                <input type="text" name="username" required></div> 
+              <div class="col"><label for="username">Username: </label>
+                <input type="text" name="username" required>
+              </div>
             </div>
             <div class="row m-1">
-                <div class="col">
-                    <label for="email">Email: </label>
-                    <input type="email" name="email" required>
-                </div>
+              <div class="col">
+                <label for="email">Email: </label>
+                <input type="email" name="email" required>
+              </div>
             </div>
             <div class="row m-1">
-                <div class="col">
-                    <label for="password">Password: </label>
-                    <input type="password" id="password"name="password" required>
-                </div>
+              <div class="col">
+                <label for="password">Password: </label>
+                <input type="password" id="password" name="password" required>
+              </div>
             </div>
             <div class="row m-1">
-                <div class="col">
-                    <label for="password">Conferma Password: </label>
-                    <input type="password" id="passwordConferma"name="passwordConferma" required>
-                </div>
+              <div class="col">
+                <label for="password">Conferma Password: </label>
+                <input type="password" id="passwordConferma" name="passwordConferma" required>
+              </div>
             </div>
             <div class="row m-1">
-                <div class="col">
-                    <label for="Scuola">Scuola: </label>
-                    <select id="Scuola" name="scuola">
-                      <option value="0">Scuola secondaria di primo grado</option>
-                      <option value="1">Scuola secondaria di secondo grado</option>
-                      <option value="2">Università</option>
-                    </select>
-                </div>
+              <div class="col">
+                <label for="Scuola">Scuola: </label>
+                <select id="Scuola" name="scuola">
+                  <option value="0">Scuola secondaria di primo grado</option>
+                  <option value="1">Scuola secondaria di secondo grado</option>
+                  <option value="2">Università</option>
+                </select>
+              </div>
             </div>
             <div class="row m-1">
-                <div class="col">
-                    <label for="Anno">Anno scolastico: </label>
-                    <select id="Anno" name="anno">
-                    </select>
-                </div>
+              <div class="col">
+                <label for="Anno">Anno scolastico: </label>
+                <select id="Anno" name="anno">
+                </select>
+              </div>
             </div>
             <div class="row m-1">
-                <div class="col">   
-                    <input type="submit" value="Registrati"> 
-                </div>
+              <div class="col">
+                <input type="submit" value="Registrati">
+              </div>
             </div>
-        </form>        
-        <a href="/login">Accedi!</a>
+          </form>
+          <a href="/login">Accedi!</a>
         </div>
       </div>
     </div>
   </div>
-</div>
+  </div>
 </body>
 <script>
   let passwordConferma = document.getElementById("passwordConferma")
@@ -64,10 +66,10 @@
   function updateAnnoOptions(scuolaValue) {
     var annoSelect = document.getElementById("Anno");
     annoSelect.innerHTML = ""; // Rimuove tutte le opzioni attuali
-  
+
     var options = [];
 
-    switch(scuolaValue) {
+    switch (scuolaValue) {
       case "0":
         options = ["3"];
         break;
@@ -75,10 +77,10 @@
         options = ["1", "2", "3", "4", "5"];
         break;
       case "2":
-        options = ["1", "2", "3", "4", "5","6","7"];
+        options = ["1", "2", "3", "4", "5", "6", "7"];
         break;
     }
-  
+
     options.forEach(function(value) {
       var option = document.createElement("option");
       option.text = value;
@@ -86,13 +88,13 @@
       annoSelect.add(option);
     });
   }
-  
+
   // Ascolta l'evento di cambio sulla select della scuola
   document.getElementById("Scuola").addEventListener("change", function() {
     var scuolaValue = this.value;
     updateAnnoOptions(scuolaValue);
   });
-  
+
   // Inizializza le opzioni dell'anno sulla base della scuola selezionata inizialmente
   updateAnnoOptions(document.getElementById("Scuola").value);
 
@@ -101,10 +103,10 @@
     if (passwordConferma.value) {
       if (password.value != passwordConferma.value) {
         /*In caso non fossero uguali*/
-          return false
+        return false
         e.preventDefault()
-      } 
-    } 
+      }
+    }
   }
 </script>
 <%- include("../public/partials/footer.ejs") %>
