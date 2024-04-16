@@ -30,7 +30,7 @@
             <div class="row m-1">
                 <div class="col">
                     <label for="Scuola">Scuola: </label>
-                    <select id="Scuola">
+                    <select id="Scuola" name="scuola">
                       <option value="0">Scuola secondaria di primo grado</option>
                       <option value="1">Scuola secondaria di secondo grado</option>
                       <option value="2">Università</option>
@@ -40,10 +40,7 @@
             <div class="row m-1">
                 <div class="col">
                     <label for="Anno">Anno scolastico: </label>
-                    <select id="Anno">
-                      <option value="0">Scuola secondaria di primo grado</option>
-                      <option value="1">Scuola secondaria di secondo grado</option>
-                      <option value="2">Università</option>
+                    <select id="Anno" name="anno">
                     </select>
                 </div>
             </div>
@@ -63,17 +60,23 @@
 <script>
   let passwordConferma = document.getElementById("passwordConferma")
   let password = document.getElementById("password")
-  let selectAnno = document.getElementById("Anno");
   // Funzione per aggiornare le opzioni dell'elemento select dell'anno
   function updateAnnoOptions(scuolaValue) {
     var annoSelect = document.getElementById("Anno");
     annoSelect.innerHTML = ""; // Rimuove tutte le opzioni attuali
   
     var options = [];
-    if (scuolaValue === "0") { // Scuola secondaria di primo grado
-      options = ["1", "2", "3"];
-    } else { // Scuola secondaria di secondo grado o università
-      options = ["1", "2", "3", "4", "5"];
+
+    switch(scuolaValue) {
+      case "0":
+        options = ["3"];
+        break;
+      case "1":
+        options = ["1", "2", "3", "4", "5"];
+        break;
+      case "2":
+        options = ["1", "2", "3", "4", "5","6","7"];
+        break;
     }
   
     options.forEach(function(value) {

@@ -136,8 +136,9 @@ app.post("/login", isNotAuthenticated, (req, res) => {
 
 app.post("/register", isNotAuthenticated, (req, res) => {
   const { username, password, email } = req.body;
+  console.log(req.body);
   query = "SELECT * FROM utente WHERE Username = ? or Email = ?";
-
+  //Modificare la query di inserimento per selezionare l'id anno scolastico correttamente dato "scuola" e "anno" es: 0,3 terza media id=0
   connection.query(query, [username, email], (err, result) => {
     if (err) throw err;
     if (result.length > 0) {
