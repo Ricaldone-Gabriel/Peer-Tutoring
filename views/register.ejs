@@ -39,6 +39,12 @@
                 </select>
               </div>
             </div>
+
+            <div class="row m-1">
+              <div class="col" id="tipoContainer">
+              </div>
+            </div>
+
             <div class="row m-1">
               <div class="col">
                 <label for="Anno">Anno scolastico: </label>
@@ -46,6 +52,7 @@
                 </select>
               </div>
             </div>
+
             <div class="row m-1">
               <div class="col">
                 <input type="submit" value="Registrati">
@@ -89,14 +96,46 @@
     });
   }
 
+  // Funzione per aggiornare il select aggiuntivo in base alla scelta della scuola
+  function updateTipoSelect(scuolaValue) {
+    var tipoContainer = document.getElementById("tipoContainer");
+    tipoContainer.innerHTML = ""; // Rimuove il select aggiuntivo attuale
+
+    if (scuolaValue === "1") { // Scuola secondaria di secondo grado o università
+      var tipoSelect = document.createElement("select");
+      var label = document.createElement("label");
+      label.htmlFor = "Tipo";
+      label.innerHTML = "Tipo:";
+
+      tipoContainer.appendChild(label);
+      tipoSelect.id = "Tipo";
+      tipoSelect.name = "Tipo";
+      var options = ["Informatica", "Telecomunicazioni", "Biotecnologie", "Energia", "Scienze Applicate"];
+
+
+      options.forEach(function(value) {
+        var option = document.createElement("option");
+        option.text = value;
+        option.value = value;
+        tipoSelect.add(option);
+      });
+
+      tipoContainer.appendChild(tipoSelect);
+    }
+  }
+
+  // Inizializza il select aggiuntivo sulla base della scuola selezionata inizialmente
+  updateTipoSelect(document.getElementById("Scuola").value);
+
+  // Inizializza le opzioni dell'anno sulla base della scuola selezionata inizialmente
+  updateAnnoOptions(document.getElementById("Scuola").value);
+
   // Ascolta l'evento di cambio sulla select della scuola
   document.getElementById("Scuola").addEventListener("change", function() {
     var scuolaValue = this.value;
     updateAnnoOptions(scuolaValue);
+    updateTipoSelect(scuolaValue);
   });
-
-  // Inizializza le opzioni dell'anno sulla base della scuola selezionata inizialmente
-  updateAnnoOptions(document.getElementById("Scuola").value);
 
 
   function comparePwd() {
