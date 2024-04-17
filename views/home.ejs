@@ -2,6 +2,30 @@
 
 <body>
   <%- include("../public/partials/navbar.ejs") %>
-  <h3>Home</h3>
+  <h1>Home</h1>
+  <div id="postsContainer"></div>
+
+  <script>
+    const socket = new WebSocket('ws://localhost:3000');
+
+    socket.addEventListener('open', function(event) {
+      console.log('Connected to WebSocket server');
+    });
+
+    socket.addEventListener('message', function(event) {
+      const posts = JSON.parse(event.data);
+      const postsContainer = document.getElementById('postsContainer');
+
+      // Clear previous content
+      postsContainer.innerHTML = '';
+
+      // Iterate through received posts and add them to the container
+      posts.forEach(post => {
+        const postElement = document.createElement('div');
+        postElement.innerHTML = `<strong>${post.author}</strong>: ${post.message}`;
+        postsContainer.appendChild(postElement);
+      });
+    });
+  </script>
 </body>
 <%- include("../public/partials/footer.ejs") %>
