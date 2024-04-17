@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Apr 16, 2024 alle 18:20
+-- Creato il: Apr 17, 2024 alle 07:07
 -- Versione del server: 10.4.32-MariaDB
 -- Versione PHP: 8.2.12
 
@@ -177,6 +177,14 @@ CREATE TABLE `utente` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
+-- Dump dei dati per la tabella `utente`
+--
+
+INSERT INTO `utente` (`ID_Utente`, `Username`, `Password`, `Email`, `ID_AnnoScolastico`, `Esperienza`, `Livello`, `Data_Creazione`) VALUES
+(2, 'paap', 'gagagaga', 'paap.piip@gmail.com', 1, 0, 0, '2024-04-16 21:44:30'),
+(3, 'pucca', 'faccioquellochemipare', 'puccagamer20@gmail.com', 26, 0, 0, '2024-04-16 21:46:09');
+
+--
 -- Indici per le tabelle scaricate
 --
 
@@ -233,7 +241,7 @@ ALTER TABLE `materia`
 -- AUTO_INCREMENT per la tabella `utente`
 --
 ALTER TABLE `utente`
-  MODIFY `ID_Utente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID_Utente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Limiti per le tabelle scaricate
