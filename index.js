@@ -187,6 +187,12 @@ const { Server } = require("ws");
 const ws_server = new Server({ server });
 
 ws_server.on("connection", (wsc) => {
+  let queryWS = "SELECT ";
+  connection.query(query, (err, result) => {
+    if (err) throw err;
+    else {
+    }
+  });
   wsc.send(JSON.stringify(messageMove));
 
   wsc.on("message", (data) => {
