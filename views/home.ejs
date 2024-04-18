@@ -3,28 +3,51 @@
 <body>
   <%- include("../public/partials/navbar.ejs") %>
   <h1>Home</h1>
+
+  <form action="/post" method="post">
+    <label for="text">Testo del post:</label><br>
+    <textarea id="text" name="text" rows="4" cols="50"></textarea><br><br>
+    <label for="option">Seleziona la materia:</label><br>
+    <select id="materia" name="materia">
+      <% options.forEach(function(option) { %>
+      <option value="<%= option.Number %>"><%= option.Name %></option>
+      <% }); %>
+    </select><br><br>
+    <button type="submit">Invia</button>
+  </form>
+
   <div id="postsContainer"></div>
 
   <script>
     const socket = new WebSocket('ws://localhost:3000');
+    const postsContainer = document.getElementById('postsContainer');
 
     socket.addEventListener('open', function(event) {
       console.log('Connected to WebSocket server');
     });
 
     socket.addEventListener('message', function(event) {
-      const posts = JSON.parse(event.data);
-      const postsContainer = document.getElementById('postsContainer');
-
+      const arrived = JSON.parse(event.data)
       // Clear previous content
       postsContainer.innerHTML = '';
 
+      switch (arrived.type) {
+        case "sendPosts":
+          console.log(arrived.posts)
+          arrived.posts.forEach(post => {
+            const postElement = document.createElement('div');
+            postElement.innerHTML = `<strong>${post.author} ${post.date}</strong>: ${post.text}`;
+            postsContainer.appendChild(postElement);
+          });
+          break;
+      }
+      /*
       // Iterate through received posts and add them to the container
       posts.forEach(post => {
         const postElement = document.createElement('div');
         postElement.innerHTML = `<strong>${post.author}</strong>: ${post.message}`;
         postsContainer.appendChild(postElement);
-      });
+      });*/
     });
   </script>
 </body>

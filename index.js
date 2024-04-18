@@ -12,6 +12,9 @@ const app = express();
 const httpServer = http.createServer(app);
 const httpPort = 3000;
 
+let optionsFromServer = [];
+let queryServer = "SELECT ID_Materia, Nome FROM materia";
+
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use("/", express.static(__dirname + "/views"));
@@ -33,6 +36,18 @@ var connection = mysql.createConnection({
   user: "root",
   password: "",
   database: "peer tutoring",
+});
+
+connection.query(queryServer, (err, result) => {
+  if (err) throw err;
+  result.forEach((record) => {
+    const option = {
+      Number: record.ID_Materia,
+      Name: record.Nome,
+    };
+    // Aggiungiamo l'opzione all'array optionsFromServer
+    optionsFromServer.push(option);
+  });
 });
 
 function isAuthenticated(req, res, next) {
@@ -75,12 +90,37 @@ app.get("/", isNotAuthenticated, (req, res) => {
 
 app.get("/home", isAuthenticated, (req, res) => {
   if (req.device.type === "desktop") {
-    res.render("home.ejs");
+    res.render("home.ejs", { options: optionsFromServer });
   } else {
-    res.render("home.ejs");
+    res.render("home.ejs", { options: optionsFromServer });
   }
 });
 
+app.get("/settings", isAuthenticated, (req, res) => {
+  let listaMaterie = [];
+  let query = `SELECT ID_Materia FROM tutee WHERE ID_Utente = ${req.session.user}`;
+  let materieTutee = [];
+  let materieTutor = [];
+  connection.query(query, (err, result) => {
+    if (err) throw err;
+    result.forEach((record) => {
+      materieTutee.push(record.ID_Materia);
+    });
+  });
+  query = `SELECT ID_Materia FROM tutor WHERE ID_Utente = ${req.session.user}`;
+  connection.query(query, (err, result) => {
+    if (err) throw err;
+    result.forEach((record) => {
+      materieTutor.push(record.ID_Materia);
+    });
+  });
+
+  if (req.device.type === "desktop") {
+    res.render("settings.ejs", { materie: listaMaterie });
+  } else {
+    res.render("settings.ejs");
+  }
+});
 app.get("/login", isNotAuthenticated, (req, res) => {
   if (req.device.type === "desktop") {
     res.render("login.ejs");
@@ -109,12 +149,23 @@ CREATE TABLE `utente` (
 ) 
 */
 
+app.post("/post", isAuthenticated, (req, res) => {
+  const { text, materia } = req.body;
+  let query = `INSERT INTO post(ID_Autore, Testo, ID_Materia) VALUES (${req.session.user},'${text}',${materia})`;
+
+  connection.query(query, (err, result) => {
+    if (err) throw err;
+    else {
+      res.redirect("/home");
+    }
+  });
+});
+
 app.post("/login", isNotAuthenticated, (req, res) => {
   const { username, password, remember } = req.body;
-  console.log(username + " " + password + " " + remember);
-  query = `SELECT ID_Utente, Username FROM utente WHERE Username = '${username}' AND Password = '${password}'`;
+  let query = `SELECT ID_Utente, Username FROM utente WHERE Username = '${username}' AND Password = '${password}'`;
 
-  connection.query(query, [username, password], (err, result) => {
+  connection.query(query, (err, result) => {
     if (err) throw err;
     if (result.length > 0) {
       const user = result[0];
@@ -136,8 +187,9 @@ app.post("/login", isNotAuthenticated, (req, res) => {
 
 app.post("/register", isNotAuthenticated, (req, res) => {
   const { username, password, email, scuola, tipo, anno } = req.body;
+  let AnnoScolastico;
   console.log(req.body);
-  query = `SELECT * FROM utente WHERE Username = '${username}' or Email = '${email}'`;
+  let query = `SELECT * FROM utente WHERE Username = '${username}' or Email = '${email}'`;
   //Modificare la query di inserimento per selezionare l'id anno scolastico correttamente dato "scuola" e "anno" es: 0,3 terza media id=0
 
   connection.query(query, [username, email], (err, result) => {
@@ -154,19 +206,33 @@ app.post("/register", isNotAuthenticated, (req, res) => {
       connection.query(query, (err, result) => {
         if (err) throw err;
         else {
-          console.log(result[0].ID_AnnoScolastico + " " + result);
-          query = `INSERT INTO utente (Username,Password,Email,ID_AnnoScolastico) VALUES ('${username}','${password}','${email}',${result[0].ID_AnnoScolastico})`;
+          AnnoScolastico = result[0].ID_AnnoScolastico;
+          query = `INSERT INTO utente (Username,Password,Email,ID_AnnoScolastico) VALUES ('${username}','${password}','${email}',${AnnoScolastico})`;
           connection.query(query, (err, result) => {
             if (err) throw err;
             else console.log("Utente inserito");
           });
-          query = `SELECT Username,ID_Utente FROM utente WHERE Username = '${username}'`;
+
+          query = `SELECT Username, ID_Utente FROM utente WHERE Username = '${username}'`;
           connection.query(query, (err, result) => {
             if (err) throw err;
             else {
               req.session.user = result[0].ID_Utente;
               req.session.username = result[0].Username;
               req.session.cookie.maxAge = 24 * 60 * 60 * 1000;
+              query = `SELECT DISTINCT ID_Materia FROM composto WHERE ID_AnnoScolastico = ${AnnoScolastico}`;
+              connection.query(query, (err, result) => {
+                if (err) throw err;
+                else {
+                  result.forEach((record) => {
+                    query = `INSERT INTO tutee(ID_Utente, ID_Materia) VALUES (${req.session.user},${record.ID_Materia})`;
+                    connection.query(query, (err, result) => {
+                      if (err) throw err;
+                      console.log("Valore inserito");
+                    });
+                  });
+                }
+              });
               res.redirect("/home");
             }
           });
@@ -187,13 +253,26 @@ const { Server } = require("ws");
 const ws_server = new Server({ server });
 
 ws_server.on("connection", (wsc) => {
-  let queryWS = "SELECT ";
-  connection.query(query, (err, result) => {
+  let queryWS =
+    "SELECT p.Testo, p.DataPost, u.Username FROM post p, utente u WHERE p.ID_Autore = u.ID_Utente LIMIT 20";
+  let message;
+  connection.query(queryWS, (err, result) => {
     if (err) throw err;
     else {
+      let postList = [];
+      result.forEach((record) => {
+        let post = {
+          text: record.Testo,
+          date: record.DataPost,
+          author: record.Username,
+        };
+        postList.push(post);
+      });
+
+      message = { type: "sendPosts", posts: postList };
+      wsc.send(JSON.stringify(message));
     }
   });
-  wsc.send(JSON.stringify(messageMove));
 
   wsc.on("message", (data) => {
     let message = JSON.parse(data);

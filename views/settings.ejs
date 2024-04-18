@@ -1,0 +1,24 @@
+<%- include("../public/partials/header.ejs") %>
+
+<body>
+  <%- include("../public/partials/navbar.ejs") %>
+  <h1>User Settings</h1>
+
+  <div>
+    <!-- Se l'utente è un tutee, visualizza un pulsante per diventare tutor, altrimenti, visualizza un pulsante per diventare tutee -->
+    <% subjects.forEach(subject => { %>
+    <div>
+      <p>Subject: <%= subject.Materia %></p>
+      <form action="/change-role" method="post">
+        <input type="hidden" name="subjectId" value="<%= subject._id %>">
+        <p>Role:</p>
+        <label for="tutor_<%= subject._id %>">Tutor</label>
+        <input type="radio" id="tutor_<%= subject._id %>" name="role_<%= subject._id %>" value="tutor" <%= subject.ValTutor === 'tutor' ? 'checked' : '' %>>
+        <label for="tutee_<%= subject._id %>">Tutee</label>
+        <input type="radio" id="tutee_<%= subject._id %>" name="role_<%= subject._id %>" value="tutee" <%= subject.ValTutor === 'tutee' ? 'checked' : '' %>>
+        <button type="submit">Save</button>
+      </form>
+    </div>
+    <% }); %>
+</body>
+<%- include("../public/partials/footer.ejs") %>

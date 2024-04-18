@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Apr 18, 2024 alle 08:14
+-- Creato il: Apr 18, 2024 alle 10:34
 -- Versione del server: 10.4.32-MariaDB
 -- Versione PHP: 8.2.12
 
@@ -176,6 +176,38 @@ CREATE TABLE `post` (
 -- --------------------------------------------------------
 
 --
+-- Struttura della tabella `tutee`
+--
+
+CREATE TABLE `tutee` (
+  `ID_tutee` int(11) NOT NULL,
+  `ID_Utente` int(11) NOT NULL,
+  `ID_Materia` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dump dei dati per la tabella `tutee`
+--
+
+INSERT INTO `tutee` (`ID_tutee`, `ID_Utente`, `ID_Materia`) VALUES
+(1, 3, 1),
+(2, 3, 2);
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `tutor`
+--
+
+CREATE TABLE `tutor` (
+  `ID_Tutor` int(11) NOT NULL,
+  `ID_Utente` int(11) NOT NULL,
+  `ID_Materia` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struttura della tabella `utente`
 --
 
@@ -189,6 +221,13 @@ CREATE TABLE `utente` (
   `Livello` int(11) NOT NULL DEFAULT 0 COMMENT 'Automatico',
   `Data_Creazione` datetime NOT NULL DEFAULT current_timestamp() COMMENT 'Automatico'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dump dei dati per la tabella `utente`
+--
+
+INSERT INTO `utente` (`ID_Utente`, `Username`, `Password`, `Email`, `ID_AnnoScolastico`, `Esperienza`, `Livello`, `Data_Creazione`) VALUES
+(3, 'test', 'test', 'test@gmail.com', 11, 0, 0, '2024-04-18 10:12:18');
 
 --
 -- Indici per le tabelle scaricate
@@ -223,6 +262,22 @@ ALTER TABLE `post`
   ADD KEY `ID_Materia` (`ID_Materia`);
 
 --
+-- Indici per le tabelle `tutee`
+--
+ALTER TABLE `tutee`
+  ADD PRIMARY KEY (`ID_tutee`),
+  ADD KEY `ID_Utente` (`ID_Utente`),
+  ADD KEY `ID_maaa` (`ID_Materia`);
+
+--
+-- Indici per le tabelle `tutor`
+--
+ALTER TABLE `tutor`
+  ADD PRIMARY KEY (`ID_Tutor`),
+  ADD KEY `ID_uuuuu` (`ID_Utente`),
+  ADD KEY `ID_maa` (`ID_Materia`);
+
+--
 -- Indici per le tabelle `utente`
 --
 ALTER TABLE `utente`
@@ -255,13 +310,25 @@ ALTER TABLE `materia`
 -- AUTO_INCREMENT per la tabella `post`
 --
 ALTER TABLE `post`
-  MODIFY `ID_Post` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID_Post` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT per la tabella `tutee`
+--
+ALTER TABLE `tutee`
+  MODIFY `ID_tutee` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT per la tabella `tutor`
+--
+ALTER TABLE `tutor`
+  MODIFY `ID_Tutor` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT per la tabella `utente`
 --
 ALTER TABLE `utente`
-  MODIFY `ID_Utente` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID_Utente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Limiti per le tabelle scaricate
@@ -280,6 +347,20 @@ ALTER TABLE `composto`
 ALTER TABLE `post`
   ADD CONSTRAINT `ID_Autore` FOREIGN KEY (`ID_Autore`) REFERENCES `utente` (`ID_Utente`),
   ADD CONSTRAINT `ID_Materia` FOREIGN KEY (`ID_Materia`) REFERENCES `materia` (`ID_Materia`);
+
+--
+-- Limiti per la tabella `tutee`
+--
+ALTER TABLE `tutee`
+  ADD CONSTRAINT `ID_Utente` FOREIGN KEY (`ID_Utente`) REFERENCES `utente` (`ID_Utente`),
+  ADD CONSTRAINT `ID_maaa` FOREIGN KEY (`ID_Materia`) REFERENCES `materia` (`ID_Materia`);
+
+--
+-- Limiti per la tabella `tutor`
+--
+ALTER TABLE `tutor`
+  ADD CONSTRAINT `ID_maa` FOREIGN KEY (`ID_Materia`) REFERENCES `materia` (`ID_Materia`),
+  ADD CONSTRAINT `ID_uuuuu` FOREIGN KEY (`ID_Utente`) REFERENCES `utente` (`ID_Utente`);
 
 --
 -- Limiti per la tabella `utente`
