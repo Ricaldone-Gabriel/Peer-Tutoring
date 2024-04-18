@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Apr 17, 2024 alle 07:07
+-- Creato il: Apr 18, 2024 alle 08:14
 -- Versione del server: 10.4.32-MariaDB
 -- Versione PHP: 8.2.12
 
@@ -162,6 +162,20 @@ INSERT INTO `materia` (`ID_Materia`, `Tipo`, `Nome`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Struttura della tabella `post`
+--
+
+CREATE TABLE `post` (
+  `ID_Post` int(11) NOT NULL,
+  `ID_Autore` int(11) NOT NULL,
+  `Testo` text NOT NULL,
+  `DataPost` date NOT NULL DEFAULT current_timestamp(),
+  `ID_Materia` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struttura della tabella `utente`
 --
 
@@ -175,14 +189,6 @@ CREATE TABLE `utente` (
   `Livello` int(11) NOT NULL DEFAULT 0 COMMENT 'Automatico',
   `Data_Creazione` datetime NOT NULL DEFAULT current_timestamp() COMMENT 'Automatico'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
---
--- Dump dei dati per la tabella `utente`
---
-
-INSERT INTO `utente` (`ID_Utente`, `Username`, `Password`, `Email`, `ID_AnnoScolastico`, `Esperienza`, `Livello`, `Data_Creazione`) VALUES
-(2, 'paap', 'gagagaga', 'paap.piip@gmail.com', 1, 0, 0, '2024-04-16 21:44:30'),
-(3, 'pucca', 'faccioquellochemipare', 'puccagamer20@gmail.com', 26, 0, 0, '2024-04-16 21:46:09');
 
 --
 -- Indici per le tabelle scaricate
@@ -207,6 +213,14 @@ ALTER TABLE `composto`
 --
 ALTER TABLE `materia`
   ADD PRIMARY KEY (`ID_Materia`);
+
+--
+-- Indici per le tabelle `post`
+--
+ALTER TABLE `post`
+  ADD PRIMARY KEY (`ID_Post`),
+  ADD KEY `ID_Autore` (`ID_Autore`),
+  ADD KEY `ID_Materia` (`ID_Materia`);
 
 --
 -- Indici per le tabelle `utente`
@@ -238,10 +252,16 @@ ALTER TABLE `materia`
   MODIFY `ID_Materia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT per la tabella `post`
+--
+ALTER TABLE `post`
+  MODIFY `ID_Post` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT per la tabella `utente`
 --
 ALTER TABLE `utente`
-  MODIFY `ID_Utente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `ID_Utente` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Limiti per le tabelle scaricate
@@ -253,6 +273,13 @@ ALTER TABLE `utente`
 ALTER TABLE `composto`
   ADD CONSTRAINT `Anno scolastico` FOREIGN KEY (`ID_AnnoScolastico`) REFERENCES `anno scolastico` (`ID_AnnoScolastico`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `Materia` FOREIGN KEY (`ID_Materia`) REFERENCES `materia` (`ID_Materia`);
+
+--
+-- Limiti per la tabella `post`
+--
+ALTER TABLE `post`
+  ADD CONSTRAINT `ID_Autore` FOREIGN KEY (`ID_Autore`) REFERENCES `utente` (`ID_Utente`),
+  ADD CONSTRAINT `ID_Materia` FOREIGN KEY (`ID_Materia`) REFERENCES `materia` (`ID_Materia`);
 
 --
 -- Limiti per la tabella `utente`
