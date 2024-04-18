@@ -6,19 +6,20 @@
 
   <div>
     <!-- Se l'utente è un tutee, visualizza un pulsante per diventare tutor, altrimenti, visualizza un pulsante per diventare tutee -->
-    <% subjects.forEach(subject => { %>
+    <% materie.forEach(materia => { %>
     <div>
-      <p>Subject: <%= subject.Materia %></p>
-      <form action="/change-role" method="post">
-        <input type="hidden" name="subjectId" value="<%= subject._id %>">
-        <p>Role:</p>
-        <label for="tutor_<%= subject._id %>">Tutor</label>
-        <input type="radio" id="tutor_<%= subject._id %>" name="role_<%= subject._id %>" value="tutor" <%= subject.ValTutor === 'tutor' ? 'checked' : '' %>>
-        <label for="tutee_<%= subject._id %>">Tutee</label>
-        <input type="radio" id="tutee_<%= subject._id %>" name="role_<%= subject._id %>" value="tutee" <%= subject.ValTutor === 'tutee' ? 'checked' : '' %>>
+      <p>Subject: <%= materia.nomeMateria %></p>
+      <p>Role:</p>
+      <form action="/settings" method="post">
+        <input type="hidden" name="materiaID" value="<%= materia.idMateria %>">
+        <label for="tutor_<%= materia.idMateria %>">Tutor</label>
+        <input type="radio" id="tutor_<%= materia.idMateria %>" name="role" value="tutor" <%= materia.ruolo === 'tutor' ? 'checked' : '' %>>
+        <label for="tutee_<%= materia._id %>">Tutee</label>
+        <input type="radio" id="tutee_<%= materia.idMateria %>" name="role" value="tutee" <%= materia.ruolo === 'tutee' ? 'checked' : '' %>>
         <button type="submit">Save</button>
       </form>
     </div>
     <% }); %>
 </body>
+
 <%- include("../public/partials/footer.ejs") %>

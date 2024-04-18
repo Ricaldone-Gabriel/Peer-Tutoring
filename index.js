@@ -98,28 +98,50 @@ app.get("/home", isAuthenticated, (req, res) => {
 
 app.get("/settings", isAuthenticated, (req, res) => {
   let listaMaterie = [];
-  let query = `SELECT ID_Materia FROM tutee WHERE ID_Utente = ${req.session.user}`;
   let materieTutee = [];
   let materieTutor = [];
+  let materieTotali = [];
+  let query = `SELECT t.ID_Materia, m.Nome FROM tutee t, materia m WHERE t.ID_Materia = m.ID_Materia AND t.ID_Utente = ${req.session.user}`;
   connection.query(query, (err, result) => {
     if (err) throw err;
-    result.forEach((record) => {
-      materieTutee.push(record.ID_Materia);
-    });
-  });
-  query = `SELECT ID_Materia FROM tutor WHERE ID_Utente = ${req.session.user}`;
-  connection.query(query, (err, result) => {
-    if (err) throw err;
-    result.forEach((record) => {
-      materieTutor.push(record.ID_Materia);
-    });
-  });
+    if (result.length > 0) {
+      result.forEach((record) => {
+        let materia = {
+          idMateria: record.ID_Materia,
+          nomeMateria: record.Nome,
+          ruolo: "tutee",
+        };
+        materieTutee.push(materia);
+      });
+    }
+    query = `SELECT t.ID_Materia, m.Nome FROM tutor t, materia m WHERE t.ID_Materia = m.ID_Materia AND t.ID_Utente = ${req.session.user}`;
+    connection.query(query, (err, result) => {
+      if (err) throw err;
+      if (result.length > 0) {
+        result.forEach((record) => {
+          let materia = {
+            idMateria: record.ID_Materia,
+            nomeMateria: record.Nome,
+            ruolo: "tutor",
+          };
+          materieTutor.push(materia);
+        });
+      }
+      console.log(materieTutor);
+      console.log(materieTutee);
 
-  if (req.device.type === "desktop") {
-    res.render("settings.ejs", { materie: listaMaterie });
-  } else {
-    res.render("settings.ejs");
-  }
+      materieTotali = materieTutee.concat(materieTutor);
+      if (req.device.type === "desktop") {
+        res.render("settings.ejs", {
+          materie: materieTutee.concat(materieTutor),
+        });
+      } else {
+        res.render("settings.ejs", {
+          materie: materieTutee.concat(materieTutor),
+        });
+      }
+    });
+  });
 });
 app.get("/login", isNotAuthenticated, (req, res) => {
   if (req.device.type === "desktop") {
@@ -148,6 +170,40 @@ CREATE TABLE `utente` (
   `Data_Creazione` datetime NOT NULL DEFAULT current_timestamp() COMMENT 'Automatico'
 ) 
 */
+
+app.post("/settings", isAuthenticated, (req, res) => {
+  console.log(req.body);
+  let { materiaID, role } = req.body;
+  console.log(materiaID + " " + role);
+  if (role === "tutee") {
+    role = "tutor";
+  } else {
+    role = "tutee";
+  }
+  let tempRecord;
+  let query = `SELECT ID_Utente, ID_Materia FROM ${role} WHERE ID_Utente = ${req.session.user} AND ID_Materia = ${materiaID}`;
+  connection.query(query, (err, result) => {
+    if (err) throw err;
+    console.log(result);
+    tempRecord = {
+      ID_Utente: result[0].ID_Utente,
+      ID_Materia: result[0].ID_Materia,
+    };
+    query = `DELETE FROM ${role} WHERE ID_Utente = ${req.session.user} AND ID_Materia = ${materiaID}`;
+    connection.query(query, (err, result) => {
+      if (err) throw err;
+      if (role === "tutor") {
+        query = `INSERT INTO tutee (ID_Utente, ID_Materia) VALUES (${tempRecord.ID_Utente},${tempRecord.ID_Materia})`;
+      } else {
+        query = `INSERT INTO tutor (ID_Utente, ID_Materia) VALUES (${tempRecord.ID_Utente},${tempRecord.ID_Materia})`;
+      }
+      connection.query(query, (err, result) => {
+        if (err) throw err;
+        res.redirect("/settings");
+      });
+    });
+  });
+});
 
 app.post("/post", isAuthenticated, (req, res) => {
   const { text, materia } = req.body;
@@ -279,7 +335,5 @@ ws_server.on("connection", (wsc) => {
     switch (message.type) {
     }
   });
-  wsc.on("close", (wsc) => {
-    console.log(`Utente ${id} sconnesso`);
-  });
+  wsc.on("close", (wsc) => {});
 });

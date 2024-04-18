@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Apr 18, 2024 alle 10:34
+-- Creato il: Apr 18, 2024 alle 18:50
 -- Versione del server: 10.4.32-MariaDB
 -- Versione PHP: 8.2.12
 
@@ -190,8 +190,8 @@ CREATE TABLE `tutee` (
 --
 
 INSERT INTO `tutee` (`ID_tutee`, `ID_Utente`, `ID_Materia`) VALUES
-(1, 3, 1),
-(2, 3, 2);
+(3, 3, 2),
+(4, 3, 1);
 
 -- --------------------------------------------------------
 
@@ -316,13 +316,13 @@ ALTER TABLE `post`
 -- AUTO_INCREMENT per la tabella `tutee`
 --
 ALTER TABLE `tutee`
-  MODIFY `ID_tutee` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ID_tutee` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT per la tabella `tutor`
 --
 ALTER TABLE `tutor`
-  MODIFY `ID_Tutor` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID_Tutor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT per la tabella `utente`
